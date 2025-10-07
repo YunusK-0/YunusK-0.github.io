@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Genellikle İlk Yapılacak İşlemler"
+title: "Ağ Ortamında İlk Yapılacak İşlemler"
 permalink: /linux/aga-ilk-giris/
 ---
 kullanıcılar rpcclient ile girilip enumdomusers ile çekilir.
