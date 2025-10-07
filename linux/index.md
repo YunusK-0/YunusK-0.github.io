@@ -8,3 +8,4 @@ permalink: /linux/
 [Ağ Ortamına İlk Girişlerde Genelde Anonim İşlemler](/linux/aga-ilk-giris/)
 [Bazı Winrm Komutlari](/linux/winrm-komutlari/)
 [NTLM hk.](/linux/ntlm/)
+[Administrator Olmak için](/linux/to-domain-admin/)
