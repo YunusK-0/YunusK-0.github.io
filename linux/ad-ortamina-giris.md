@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Linux"
+title: "Genellikle İlk Yapılacak İşlemler"
 permalink: /linux/ad-ortamina-giris/
 ---
 
