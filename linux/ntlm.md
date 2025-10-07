@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Genellikle İlk Yapılacak İşlemler"
+title: "Genel Ntlm"
 permalink: /linux/ntlm/
 ---
 
