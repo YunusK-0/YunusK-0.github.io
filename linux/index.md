@@ -3,4 +3,5 @@ layout: page
 title: "Linux"
 permalink: /linux/
 ---
-Linux ile ilgili ana bilgiler buraya
+
+[AD Ortamına İlk Girişlerde](/linux/ad-ortamina-giris/)
