@@ -6,10 +6,33 @@
 
 .search-container input {
   width: 100%;
-  padding: 10px;
+  padding: 10px 90px 10px 10px;
   font-size: 16px;
   border: 2px solid #ddd;
   border-radius: 4px;
+}
+
+.search-container button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  padding: 9px 14px;
+  border: none;
+  border-radius: 4px;
+  background: #0066cc;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.search-container button:hover {
+  background: #0055aa;
+}
+
+.search-container button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.25);
 }
 
 .search-container input:focus {

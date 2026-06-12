@@ -27,6 +27,7 @@ Hoş geldiniz! Lütfen aşağıdan başlamak istediğiniz platformu seçin:
 
 <div class="search-container">
   <input type="text" id="search-input" placeholder="Tüm sayfaları ara... (en az 2 karakter)">
+  <button type="button" id="search-button">Ara</button>
   <div id="search-results"></div>
 </div>
 
