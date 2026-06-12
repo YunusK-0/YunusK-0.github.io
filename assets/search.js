@@ -6,34 +6,59 @@ async function loadSearchData() {
   try {
     const response = await fetch('/search.json');
     searchData = await response.json();
+    console.log('Arama verileri yüklendi:', searchData.length, 'sayfa');
   } catch (error) {
     console.error('Arama verileri yüklenirken hata:', error);
   }
 }
 
-// Sayfada ara
+// Sayfada ara - tüm içeriği tarar
 function performSearch(query) {
   if (!query || query.length < 2) {
     return [];
   }
 
   const lowerQuery = query.toLowerCase();
-  return searchData.filter(item => {
+  const results = [];
+
+  searchData.forEach(item => {
     const titleMatch = item.title.toLowerCase().includes(lowerQuery);
-    const contentMatch = item.content.toLowerCase().includes(lowerQuery);
-    return titleMatch || contentMatch;
-  }).map(item => {
-    // İçerikten ilgili snippet al
-    const content = item.content.toLowerCase();
-    const index = content.indexOf(lowerQuery);
-    const snippet = index > 0 
-      ? '...' + item.content.substring(Math.max(0, index - 50), index + 100) + '...'
-      : item.content.substring(0, 150) + '...';
+    const contentLower = item.content.toLowerCase();
+    const contentMatch = contentLower.includes(lowerQuery);
     
-    return {
-      ...item,
-      snippet: snippet
-    };
+    if (titleMatch || contentMatch) {
+      // İçerikten ilgili snippet al
+      let snippet = '';
+      let matchCount = 0;
+
+      // Tüm eşleşmeleri bul
+      const regex = new RegExp(`.{0,50}${lowerQuery}.{0,50}`, 'gi');
+      const matches = item.content.match(regex);
+      
+      if (matches && matches.length > 0) {
+        snippet = matches.slice(0, 3).join(' ... ');
+        matchCount = (item.content.match(new RegExp(lowerQuery, 'gi')) || []).length;
+      } else if (contentMatch) {
+        const index = contentLower.indexOf(lowerQuery);
+        snippet = item.content.substring(Math.max(0, index - 50), index + 150);
+      } else {
+        snippet = item.content.substring(0, 150);
+      }
+
+      results.push({
+        ...item,
+        snippet: snippet.trim(),
+        matchCount: matchCount,
+        isTitle: titleMatch
+      });
+    }
+  });
+
+  // Başlık eşleşenler önce gelsin, sonra eşleşme sayısına göre sırala
+  return results.sort((a, b) => {
+    if (a.isTitle && !b.isTitle) return -1;
+    if (!a.isTitle && b.isTitle) return 1;
+    return b.matchCount - a.matchCount;
   });
 }
 
@@ -46,41 +71,58 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (!searchInput || !searchResults) return;
   
+  // Debounce fonksiyonu - performans için
+  let searchTimeout;
   searchInput.addEventListener('input', function(e) {
-    const query = e.target.value.trim();
-    const results = performSearch(query);
+    clearTimeout(searchTimeout);
     
-    searchResults.innerHTML = '';
-    
-    if (query.length < 2) {
-      searchResults.style.display = 'none';
-      return;
-    }
-    
-    if (results.length === 0) {
-      searchResults.innerHTML = '<div class="no-results">Sonuç bulunamadı</div>';
+    searchTimeout = setTimeout(() => {
+      const query = e.target.value.trim();
+      const results = performSearch(query);
+      
+      searchResults.innerHTML = '';
+      
+      if (query.length < 2) {
+        searchResults.style.display = 'none';
+        return;
+      }
+      
+      if (results.length === 0) {
+        searchResults.innerHTML = '<div class="no-results">Sonuç bulunamadı :(</div>';
+        searchResults.style.display = 'block';
+        return;
+      }
+      
       searchResults.style.display = 'block';
-      return;
-    }
-    
-    searchResults.style.display = 'block';
-    results.forEach(result => {
-      const div = document.createElement('div');
-      div.className = 'search-result-item';
-      div.innerHTML = `
-        <a href="${result.url}">
-          <h3>${result.title}</h3>
-          <p>${result.snippet}</p>
-        </a>
-      `;
-      searchResults.appendChild(div);
-    });
+      searchResults.innerHTML = `<div class="search-info">${results.length} sonuç bulundu</div>`;
+      
+      results.forEach((result, index) => {
+        const div = document.createElement('div');
+        div.className = 'search-result-item';
+        div.innerHTML = `
+          <a href="${result.url}">
+            <h3>${result.title}${result.isTitle ? ' ✓' : ''}</h3>
+            <p class="snippet">${result.snippet}</p>
+            ${result.matchCount > 0 ? `<small class="match-count">${result.matchCount} eşleşme</small>` : ''}
+          </a>
+        `;
+        searchResults.appendChild(div);
+      });
+    }, 300); // 300ms bekle
   });
   
   // Sayfada tıklandığında arama sonuçlarını kapat
   document.addEventListener('click', function(e) {
     if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) {
       searchResults.style.display = 'none';
+    }
+  });
+  
+  // ESC tuşuna basınca kapat
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      searchResults.style.display = 'none';
+      searchInput.value = '';
     }
   });
 });
