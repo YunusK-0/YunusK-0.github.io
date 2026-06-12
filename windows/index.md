@@ -25,10 +25,18 @@ Windows sistem yönetimi, Active Directory, PowerShell ve diğer Windows özgü 
 </div>
 
 <div style="border: 2px solid #0066cc; padding: 20px; border-radius: 8px; background: #f0f7ff;">
-<h3 style="color: #0066cc; margin-top: 0;">🔷 Privilege Escalation</h3>
-<p>Windows'ta yetki yükseltme teknikleri ve araçlar</p>
-<a href="/windows/privesc/" style="color: #0066cc; font-weight: bold;">→ Sayfayı Aç (Yakında)</a>
+<h3 style="color: #0066cc; margin-top: 0;">🔷 Genel Komutlar</h3>
+<p>Password araması, dosya taraması, reverse shell, web shell ve derleyici bilgileri</p>
+<a href="/windows/general-commands/" style="color: #0066cc; font-weight: bold;">→ Sayfayı Aç</a>
 </div>
+
+<div style="border: 2px solid #0066cc; padding: 20px; border-radius: 8px; background: #f0f7ff;">
+<h3 style="color: #0066cc; margin-top: 0;">🔷 Kritik Privileges</h3>
+<p>SeImpersonate, SeTakeOwnership, SeDebug ve diğer privilege escalation opportunities</p>
+<a href="/windows/privileges/" style="color: #0066cc; font-weight: bold;">→ Sayfayı Aç</a>
+</div>
+
+<div style="border: 2px solid #0066cc; padding: 20px; border-radius: 8px; background: #f0f7ff;">
 
 <div style="border: 2px solid #0066cc; padding: 20px; border-radius: 8px; background: #f0f7ff;">
 <h3 style="color: #0066cc; margin-top: 0;">🔷 Post-Exploitation</h3>
