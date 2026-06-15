@@ -115,8 +115,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   if (searchButton) {
-    searchButton.addEventListener('click', function() {
-      renderSearchResults(searchInput.value.trim());
+    searchButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const query = searchInput.value.trim();
+      clearTimeout(searchTimeout);
+      renderSearchResults(query);
     });
   }
 

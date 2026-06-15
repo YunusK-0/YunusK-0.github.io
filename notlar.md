@@ -1,3 +1,9 @@
+---
+layout: default
+title: Notlar
+permalink: /notlar/
+---
+
 # Notlar
 
 ## 1) Servis/Users Uyarısı

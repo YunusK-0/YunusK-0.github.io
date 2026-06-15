@@ -19,6 +19,12 @@ Hoş geldiniz! Lütfen aşağıdan başlamak istediğiniz platformu seçin:
     <p>Windows sistem yönetimi, PowerShell, Active Directory, Windows-spesifik saldırı teknikleri</p>
     <a href="/windows/">Windows Rehberi</a>
   </div>
+  
+  <div class="platform-card">
+    <h2>📚 Tüm Kaynaklar</h2>
+    <p>Projede yer alan tüm sayfaları, öğreticileri ve notları içinde göz atabilirsiniz</p>
+    <a href="/resources/">Kaynakları Gözat</a>
+  </div>
 </div>
 
 ---
@@ -36,11 +42,6 @@ Hoş geldiniz! Lütfen aşağıdan başlamak istediğiniz platformu seçin:
 ## 📚 Hakkında
 
 Bu rehber, **OSCP (Offensive Security Certified Professional)** ve **CRTP (Certified Red Team Professional)** sınavlarına hazırlanmak isteyen güvenlik uzmanları için bir kaynaktır.
-
-**Son Güncellemeler:**
-- Linux bölümünde çeşitli konular eklendi
-- Windows bölümü açıldı
-- Arama fonksiyonu aktif
 
 ---
 

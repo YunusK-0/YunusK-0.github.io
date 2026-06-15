@@ -1,3 +1,9 @@
+---
+layout: default
+title: Notlar 2
+permalink: /notlar2/
+---
+
 # Notlar 2
 
 ## ASPX Reverse Shell
