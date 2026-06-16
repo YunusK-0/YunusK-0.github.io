@@ -71,78 +71,110 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchResults = document.getElementById('search-results');
   
   if (!searchInput || !searchResults) return;
-  
-  function renderSearchResults(query) {
-    const results = performSearch(query);
+
+  const MIN_QUERY_LENGTH = 2;
+  let debounceTimer;
+  let filteredPosts = [];
+
+  function filterPosts(query) {
+    const lowerQuery = query.toLowerCase();
+
+    if (lowerQuery === '') {
+      return [...searchData];
+    }
+
+    return searchData.filter(post => {
+      const title = post.title.toLowerCase();
+      const content = (post.content || '').toLowerCase();
+
+      return title.includes(lowerQuery) || content.includes(lowerQuery);
+    });
+  }
+
+  function renderPosts(posts, query) {
     searchResults.innerHTML = '';
-    
-    if (query.length < 2) {
+
+    if (query.length < MIN_QUERY_LENGTH) {
       searchResults.style.display = 'none';
       return;
     }
-    
-    if (results.length === 0) {
+
+    if (posts.length === 0) {
       searchResults.innerHTML = '<div class="no-results">Sonuç bulunamadı :(</div>';
       searchResults.style.display = 'block';
       return;
     }
-    
+
     searchResults.style.display = 'block';
-    searchResults.innerHTML = `<div class="search-info">${results.length} sonuç bulundu</div>`;
-    
-    results.forEach((result, index) => {
+    searchResults.innerHTML = `<div class="search-info">${posts.length} sonuç bulundu</div>`;
+
+    posts.forEach(post => {
       const div = document.createElement('div');
       div.className = 'search-result-item';
       div.innerHTML = `
-        <a href="${result.url}">
-          <h3>${result.title}${result.isTitle ? ' ✓' : ''}</h3>
-          <p class="snippet">${result.snippet}</p>
-          ${result.matchCount > 0 ? `<small class="match-count">${result.matchCount} eşleşme</small>` : ''}
+        <a href="${post.url}">
+          <h3>${post.title}</h3>
+          <p class="snippet">${post.snippet || ''}</p>
         </a>
       `;
       searchResults.appendChild(div);
     });
   }
-  
-  // Debounce fonksiyonu - performans için
-  let searchTimeout;
-  searchInput.addEventListener('input', function(e) {
-    clearTimeout(searchTimeout);
-    
-    searchTimeout = setTimeout(() => {
-      renderSearchResults(e.target.value.trim());
-    }, 300); // 300ms bekle
+
+  function handleSearch() {
+    const query = searchInput.value.trim();
+    filteredPosts = filterPosts(query);
+
+    if (query === '') {
+      resultCount.style.display = 'none';
+    } else {
+      resultCount.textContent = `${filteredPosts.length} result${filteredPosts.length !== 1 ? 's' : ''} found`;
+      resultCount.style.display = 'inline-block';
+    }
+
+    renderPosts(filteredPosts, query);
+  }
+
+  const resultCount = document.createElement('div');
+  resultCount.id = 'search-result-count';
+  resultCount.style.display = 'none';
+  resultCount.style.marginTop = '10px';
+  resultCount.style.fontSize = '14px';
+  resultCount.style.color = '#0066cc';
+  searchResults.parentNode.insertBefore(resultCount, searchResults);
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      handleSearch();
+    }, 150);
   });
 
-  if (searchButton) {
-    searchButton.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const query = searchInput.value.trim();
-      clearTimeout(searchTimeout);
-      renderSearchResults(query);
-    });
-  }
+  searchButton && searchButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    clearTimeout(debounceTimer);
+    handleSearch();
+  });
 
   searchInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      renderSearchResults(searchInput.value.trim());
+      clearTimeout(debounceTimer);
+      handleSearch();
     }
   });
-  
-  // Sayfada tıklandığında arama sonuçlarını kapat
+
   document.addEventListener('click', function(e) {
     if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) {
       searchResults.style.display = 'none';
     }
   });
-  
-  // ESC tuşuna basınca kapat
+
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       searchResults.style.display = 'none';
       searchInput.value = '';
+      resultCount.style.display = 'none';
     }
   });
 });
