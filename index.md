@@ -21,6 +21,12 @@ Hoş geldiniz! Lütfen aşağıdan başlamak istediğiniz platformu seçin:
   </div>
   
   <div class="platform-card">
+    <h2>🎯 Walkthroughs</h2>
+    <p>Gerçek penetrasyon testi senaryolarına dayalı adım adım rehberler ve case study'ler</p>
+    <a href="/walkthroughs/">Walkthroughs'ları Gözat</a>
+  </div>
+  
+  <div class="platform-card">
     <h2>📚 Tüm Kaynaklar</h2>
     <p>Projede yer alan tüm sayfaları, öğreticileri ve notları içinde göz atabilirsiniz</p>
     <a href="/resources/">Kaynakları Gözat</a>
