@@ -2,21 +2,27 @@
 layout: null
 ---
 [
+  {% assign first_entry = true %}
   {% for post in site.posts %}
+    {% if first_entry == false %},{% endif %}
     {
       "title": "{{ post.title | escape }}",
       "url": "{{ post.url }}",
       "date": "{{ post.date }}",
       "content": "{{ post.content | strip_html | strip_newlines | escape }}"
-    },
+    }
+    {% assign first_entry = false %}
   {% endfor %}
+
   {% for page in site.pages %}
-    {% if page.title %}
-    {
-      "title": "{{ page.title | escape }}",
-      "url": "{{ page.url }}",
-      "content": "{{ page.content | strip_html | strip_newlines | escape }}"
-    }{% unless forloop.last %},{% endunless %}
+    {% if page.title and page.url != '/search.json' %}
+      {% if first_entry == false %},{% endif %}
+      {
+        "title": "{{ page.title | escape }}",
+        "url": "{{ page.url | relative_url }}",
+        "content": "{{ page.content | strip_html | strip_newlines | escape }}"
+      }
+      {% assign first_entry = false %}
     {% endif %}
   {% endfor %}
 ]

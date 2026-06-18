@@ -55,7 +55,8 @@ Derinlemesine sistem bilgisine sahip takımlar için:
 
 | Walkthrough | Konu | Zorluk |
 |------------|------|--------|
-| [Resourced - RBCD Exploitation](/rbcd-exploitation/) | GenericAll + RBCD ile Administrator yükseltme | 🔴 Zor |
+| [Resourced - RBCD Exploitation](/resourced/) | Evil-WinRM, SharpHound ve RBCD | 🔴 Zor |
+| [RBCD exploitation](/rbcd-exploitation/) | RBCD ile yetki devri ve Administrator yükseltme | 🔴 Zor |
 | TBD | Domain Controller Compromise | 🔴 Zor |
 | TBD | Evasion & Obfuscation Teknikleri | 🔴 Zor |
 | TBD | Red Team Operasyonu Simülasyonu | 🔴 Zor |
@@ -67,9 +68,10 @@ Derinlemesine sistem bilgisine sahip takımlar için:
 - `sudo /usr/bin/impacket-secretsdump -ntds ntds.dit -security SECURITY local`
 - Hashler elde edildi.
 - `crackmapexec smb 192.168.58.175 -u ../users.txt -H pass.txt` ile spray yapıldı ve çalışan kullanıcı bulundu.
-- Bulunduktan sonra `evil-winrm` ile bağlanıldı.
-- `.\SharpHound.exe -CollectionMethod All` yapıldı...
-- Generic All yetkisi gözlemlendi → [RBCD exploitation](/rbcd-exploitation/) sayfasına bakın.
+- Evil-WinRM ile erişim sağlandı.
+- `.\SharpHound.exe -CollectionMethod All` çalıştırıldı.
+- Generic All yetkisi gözlemlendi.
+- RBCD exploit adımları için [RBCD exploitation](/rbcd-exploitation/) sayfasına bakın.
 
 ---
 
