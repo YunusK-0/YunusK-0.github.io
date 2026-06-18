@@ -112,6 +112,70 @@
   font-size: 14px;
 }
 
+/* Site Header */
+.site-header {
+  background: #002b45;
+  color: #ffffff;
+  border-bottom: 1px solid #0d4d7a;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 0;
+  flex-wrap: wrap;
+}
+
+.site-brand {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.site-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.site-nav a:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+.page-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.page-list li {
+  margin: 10px 0;
+}
+
+.page-list li a {
+  color: #0066cc;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.page-list li small {
+  color: #666;
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
 /* Platform Seçim Stileri */
 .platform-selector {
   display: flex;

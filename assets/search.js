@@ -5,6 +5,9 @@ let searchData = [];
 async function loadSearchData() {
   try {
     const response = await fetch('/search.json');
+    if (!response.ok) {
+      throw new Error(`search.json yüklenemedi: ${response.status}`);
+    }
     searchData = await response.json();
     console.log('Arama verileri yüklendi:', searchData.length, 'sayfa');
   } catch (error) {
@@ -12,49 +15,55 @@ async function loadSearchData() {
   }
 }
 
-// Sayfada ara - tüm içeriği tarar
-function performSearch(query) {
-  if (!query || query.length < 2) {
+function buildSnippet(content, query) {
+  const lowerContent = content.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  const index = lowerContent.indexOf(lowerQuery);
+
+  if (index === -1) {
+    return content.substring(0, 160).trim();
+  }
+
+  const start = Math.max(0, index - 50);
+  const end = Math.min(content.length, index + 110);
+  let snippet = content.substring(start, end).trim();
+
+  if (start > 0) {
+    snippet = '... ' + snippet;
+  }
+  if (end < content.length) {
+    snippet = snippet + ' ...';
+  }
+
+  return snippet;
+}
+
+function searchPages(query) {
+  if (!query || query.trim().length < 2) {
     return [];
   }
 
   const lowerQuery = query.toLowerCase();
-  const results = [];
+  const results = searchData.reduce((acc, item) => {
+    const title = item.title || '';
+    const content = item.content || '';
+    const titleMatch = title.toLowerCase().includes(lowerQuery);
+    const contentMatch = content.toLowerCase().includes(lowerQuery);
 
-  searchData.forEach(item => {
-    const titleMatch = item.title.toLowerCase().includes(lowerQuery);
-    const contentLower = item.content.toLowerCase();
-    const contentMatch = contentLower.includes(lowerQuery);
-    
-    if (titleMatch || contentMatch) {
-      // İçerikten ilgili snippet al
-      let snippet = '';
-      let matchCount = 0;
-
-      // Tüm eşleşmeleri bul
-      const regex = new RegExp(`.{0,50}${lowerQuery}.{0,50}`, 'gi');
-      const matches = item.content.match(regex);
-      
-      if (matches && matches.length > 0) {
-        snippet = matches.slice(0, 3).join(' ... ');
-        matchCount = (item.content.match(new RegExp(lowerQuery, 'gi')) || []).length;
-      } else if (contentMatch) {
-        const index = contentLower.indexOf(lowerQuery);
-        snippet = item.content.substring(Math.max(0, index - 50), index + 150);
-      } else {
-        snippet = item.content.substring(0, 150);
-      }
-
-      results.push({
-        ...item,
-        snippet: snippet.trim(),
-        matchCount: matchCount,
-        isTitle: titleMatch
-      });
+    if (!titleMatch && !contentMatch) {
+      return acc;
     }
-  });
 
-  // Başlık eşleşenler önce gelsin, sonra eşleşme sayısına göre sırala
+    const matchCount = (content.toLowerCase().match(new RegExp(lowerQuery, 'g')) || []).length + (titleMatch ? 1 : 0);
+    acc.push({
+      ...item,
+      snippet: buildSnippet(content, query),
+      matchCount,
+      isTitle: titleMatch
+    });
+    return acc;
+  }, []);
+
   return results.sort((a, b) => {
     if (a.isTitle && !b.isTitle) return -1;
     if (!a.isTitle && b.isTitle) return 1;
@@ -63,33 +72,17 @@ function performSearch(query) {
 }
 
 // Search input event listener
-document.addEventListener('DOMContentLoaded', function() {
-  loadSearchData();
-  
+document.addEventListener('DOMContentLoaded', async function() {
+  await loadSearchData();
+
   const searchInput = document.getElementById('search-input');
   const searchButton = document.getElementById('search-button');
   const searchResults = document.getElementById('search-results');
-  
+
   if (!searchInput || !searchResults) return;
 
   const MIN_QUERY_LENGTH = 2;
   let debounceTimer;
-  let filteredPosts = [];
-
-  function filterPosts(query) {
-    const lowerQuery = query.toLowerCase();
-
-    if (lowerQuery === '') {
-      return [...searchData];
-    }
-
-    return searchData.filter(post => {
-      const title = post.title.toLowerCase();
-      const content = (post.content || '').toLowerCase();
-
-      return title.includes(lowerQuery) || content.includes(lowerQuery);
-    });
-  }
 
   function renderPosts(posts, query) {
     searchResults.innerHTML = '';
@@ -114,25 +107,11 @@ document.addEventListener('DOMContentLoaded', function() {
       div.innerHTML = `
         <a href="${post.url}">
           <h3>${post.title}</h3>
-          <p class="snippet">${post.snippet || ''}</p>
+          <p class="snippet">${post.snippet}</p>
         </a>
       `;
       searchResults.appendChild(div);
     });
-  }
-
-  function handleSearch() {
-    const query = searchInput.value.trim();
-    filteredPosts = filterPosts(query);
-
-    if (query === '') {
-      resultCount.style.display = 'none';
-    } else {
-      resultCount.textContent = `${filteredPosts.length} result${filteredPosts.length !== 1 ? 's' : ''} found`;
-      resultCount.style.display = 'inline-block';
-    }
-
-    renderPosts(filteredPosts, query);
   }
 
   const resultCount = document.createElement('div');
@@ -143,18 +122,32 @@ document.addEventListener('DOMContentLoaded', function() {
   resultCount.style.color = '#0066cc';
   searchResults.parentNode.insertBefore(resultCount, searchResults);
 
+  function handleSearch() {
+    const query = searchInput.value.trim();
+    const posts = searchPages(query);
+
+    if (query === '') {
+      resultCount.style.display = 'none';
+    } else {
+      resultCount.textContent = `${posts.length} sonuç bulundu`;
+      resultCount.style.display = 'inline-block';
+    }
+
+    renderPosts(posts, query);
+  }
+
   searchInput.addEventListener('input', function() {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      handleSearch();
-    }, 150);
+    debounceTimer = setTimeout(handleSearch, 150);
   });
 
-  searchButton && searchButton.addEventListener('click', function(e) {
-    e.preventDefault();
-    clearTimeout(debounceTimer);
-    handleSearch();
-  });
+  if (searchButton) {
+    searchButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      clearTimeout(debounceTimer);
+      handleSearch();
+    });
+  }
 
   searchInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
