@@ -44,6 +44,7 @@ Orta düzeyde sistem bilgisine sahip takımlar için:
 |------------|------|--------|
 | [Internal - MS09-050 Exploitation](/internal/) | Windows SMB Exploitation | 🟡 Orta |
 | [Squid - phpMyAdmin RCE](/squid/) | Squid proxy uygulaması üzerinden phpMyAdmin RCE | 🟡 Orta |
+| [DVR4 - Argus Surveillance DVR](/dvr4/) | CVE-2018-15745, SSH key disclosure, privilege escalation | 🟡 Orta |
 | TBD | Active Directory Lateral Movement | 🟡 Orta |
 | TBD | Kerberos Exploitation | 🟡 Orta |
 | TBD | Living off the Land (LOLBins) | 🟡 Orta |
