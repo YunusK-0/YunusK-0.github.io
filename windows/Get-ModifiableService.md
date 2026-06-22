@@ -9,3 +9,5 @@ title: Get-ModifiableService
 ```bash
 Get-ModifiableService -Name MyService
 ```
+
+![Get-ModifiableService örneği](/assets/images/get-modCommand.png)
